@@ -1,29 +1,19 @@
-# BetaVulgarisDeleteriousMutations
-This repository holds scripts used for a manuscript concerning deleterious mutations across the beet genome. Resulting tables needed for manuscript figure generation are also here.
+BetaVulgarisDeleteriousMutations
+This repository contains scripts and data used for a manuscript investigating deleterious mutations across the Beta vulgaris genome.
+It includes:
 
-Genotyping & Genomic Conservation Pipelines
-
-A high‑confidence genotyping workflow (WGS → SNP calling → joint genotyping → filtering -> Imputation).
-A genomic conservation & deleterious‑mutation annotation workflow (gene alignment → conservation scoring → pathogenicity prediction).
-Genotyping & Genomic Conservation Pipelines
-This repository contains two related workflows:
+A genotyping pipeline (FASTQ → SNPs → imputation → PCA)
+A conservation & deleterious‑mutation pipeline (MSA → conservation scoring → deleteriousness prediction)
+Processed tables used for generating manuscript figures
 
 
 Genotyping Pipeline
-High‑confidence SNP calling, imputation, and population structure analysis.
-
-
-Genomic Conservation & Deleterious Mutation Pipeline
-Codon‑aware alignments, conservation scoring, and deleterious mutation annotation.
-
-
-Both pipelines are designed for population genomics, germplasm characterization, and conservation genetics.
-
-1. Genotyping Pipeline
 Overview
-This workflow processes WGS data from raw FASTQ through variant calling, joint genotyping, imputation, and PCA clustering. It uses DeepVariant, GLnexus, BEAGLE, and TASSEL.
+A high‑confidence whole‑genome sequencing (WGS) pipeline for SNP calling, joint genotyping, imputation, and population structure analysis.
+Built on DeepVariant, GLnexus, BEAGLE, and TASSEL.
+
 Pipeline Steps & Scripts
-1. Download SRA Reads & Read Processing
+• Download SRA Reads & Read Processing
 Scripts:
 
 iseq.sh
@@ -31,113 +21,113 @@ Process_Reads.sh
 
 Includes:
 
-SRA FASTQ download
+SRA FASTQ retrieval
 Quality trimming
 Adapter removal
-Alignment to reference genome
+Alignment to the reference genome
 
 
-2. Variant Calling
+• Variant Calling
 Script:
 
 deepvariant.sh
 
-Generates high‑accuracy single‑sample SNP and indel calls using DeepVariant.
+Generates highly accurate single‑sample SNP and indel calls using DeepVariant.
 
-3. Joint Genotyping
+• Joint Genotyping
 Script:
 
 glnexus.sh
 
-Merges DeepVariant gVCFs into a cohort‑level VCF using GLnexus.
+Merges DeepVariant gVCFs into a unified cohort VCF using GLnexus.
 
-4. Variant Filtering
+• Variant Filtering
 Script:
 
 vcf_filter.sh
 
-Applies standard SNP quality filters, including:
+Applies SNP QC filtering:
 
-Depth thresholds
-QUAL score filtering
+Depth filtering
+QUAL score thresholds
 Genotype quality (GQ)
 Missingness filtering
 
 
-5. Imputation & Phasing
+• Imputation & Phasing
 Script:
 
 BEAGLE.sh
 
 Performs genotype imputation and phasing using BEAGLE.
 
-6. PCA / Population Clustering
+• PCA / Population Structure
 Script:
 
 PCA_Tassel.sh
 
-Runs PCA in TASSEL to explore population structure from filtered SNPs.
+Runs PCA in TASSEL to explore population structure of the filtered SNP dataset.
 
-2. Genomic Conservation & Deleterious Mutation Pipeline
+Genomic Conservation & Deleterious Mutation Pipeline
 Overview
-This workflow annotates evolutionary conservation and deleteriousness across coding sequences.
-It integrates:
+Workflow for computing evolutionary conservation and predicting deleterious mutations across coding sequences.
+Integrates:
 
-Codon‑aware sequence alignments
+Codon‑aware gene alignments
 Phylogenetic conservation (PhyloP, PhastCons)
 Substitution‑rate models (EST)
-Machine‑learning deleteriousness scoring (PlantCAD2)
+Machine‑learning predictions (PlantCAD2)
+
 
 Pipeline Steps & Scripts
-1. Multiple Sequence Alignment (MSA)
+• Multiple Sequence Alignment (MSA)
 Codon‑aware gene MSAs generated using the published pipeline:
-p_reelgene
-https://bitbucket.org/bucklerlab/p_reelgene/
+p_reelgene: https://bitbucket.org/bucklerlab/p_reelgene/
 
-2. Conservation Scoring
+• Conservation Scoring
 Scripts:
 
 phastcons.sh
 EST.sh
 EST_prep.R
 
-Computes conservation metrics:
+Computes conservation scores:
 
 PhastCons
-EST (Evolutionary Substitution-based Thresholding)
+EST (Evolutionary Substitution‑based Thresholding)
 
 
-3. Deleteriousness Annotation
+• Deleteriousness Annotation
 Script:
 
 PlantCAD2.sh
 
 Predicts deleterious amino‑acid substitutions using PlantCAD2.
 
-4. Variant Integration
-Uses variant calls from deepvariant.sh and merges:
+• Variant Integration
+Integrates variant calls from:
 
+DeepVariant
 PhastCons
 PhyloP
 EST
 PlantCAD2
-DeepVariant SNPs
 
 Produces a genome‑wide deleterious mutation annotation table.
 
-
-## Citation & Dependencies
-Key External Software
+Citation & Dependencies
+External Software
 
 DeepVariant
 GLnexus
 BEAGLE
 TASSEL
-PhastCons / phyloFit / phyloP (PHAST)
+PHAST (phastCons, phyloFit, phyloP)
 PlantCAD2
-EST pipeline (Buckler Lab)
+EST (Buckler Lab)
 
-Reference
-If using gene alignments:
+Gene Alignment Reference
+If using codon‑aware alignments:
 
-Multiple sequence alignments generated using the bucklerlab p_reelgene pipeline (https://bitbucket.org/bucklerlab/p_reelgene/).
+Multiple sequence alignments were generated using the bucklerlab/p_reelgene pipeline:
+https://bitbucket.org/bucklerlab/p_reelgene
