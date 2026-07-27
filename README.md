@@ -1,133 +1,134 @@
-BetaVulgarisDeleteriousMutations
-This repository contains scripts and data used for a manuscript investigating deleterious mutations across the Beta vulgaris genome.
-It includes:
+# BetaVulgarisDeleteriousMutations
 
-A genotyping pipeline (FASTQ → SNPs → imputation → PCA)
-A conservation & deleterious‑mutation pipeline (MSA → conservation scoring → deleteriousness prediction)
-Processed tables used for generating manuscript figures
+This repository holds scripts used for a manuscript concerning deleterious mutations across the beet genome. Resulting tables needed for manuscript figure generation are also here.
 
+## Genotyping & Genomic Conservation Pipelines
 
-Genotyping Pipeline
-Overview
-A high‑confidence whole‑genome sequencing (WGS) pipeline for SNP calling, joint genotyping, imputation, and population structure analysis.
-Built on DeepVariant, GLnexus, BEAGLE, and TASSEL.
+This repository contains two related workflows:
 
-Pipeline Steps & Scripts
-• Download SRA Reads & Read Processing
-Scripts:
+### Genotyping Pipeline
+High‑confidence SNP calling, imputation, and population structure analysis.
 
-iseq.sh
-Process_Reads.sh
+### Genomic Conservation & Deleterious Mutation Pipeline
+Codon‑aware alignments, conservation scoring, and deleterious mutation annotation.
 
-Includes:
+Both pipelines are designed for population genomics, germplasm characterization, and conservation genetics.
 
-SRA FASTQ retrieval
-Quality trimming
-Adapter removal
-Alignment to the reference genome
+## Genotyping Pipeline
 
+### Overview
+This workflow processes WGS data from raw FASTQ through variant calling, joint genotyping, imputation, and PCA clustering. It uses DeepVariant, GLnexus, BEAGLE, and TASSEL.
 
-• Variant Calling
-Script:
+### Pipeline Steps & Scripts
 
-deepvariant.sh
+- **Download SRA Reads & Read Processing**
 
-Generates highly accurate single‑sample SNP and indel calls using DeepVariant.
+  Scripts:
+  - `iseq.sh`
+  - `Process_Reads.sh`
 
-• Joint Genotyping
-Script:
+  Includes:
+  - SRA FASTQ download
+  - Quality trimming
+  - Adapter removal
+  - Alignment to reference genome
 
-glnexus.sh
+- **Variant Calling**
 
-Merges DeepVariant gVCFs into a unified cohort VCF using GLnexus.
+  Script:
+  - `deepvariant.sh`
 
-• Variant Filtering
-Script:
+  Generates high‑accuracy single‑sample SNP and indel calls using DeepVariant.
 
-vcf_filter.sh
+- **Joint Genotyping**
 
-Applies SNP QC filtering:
+  Script:
+  - `glnexus.sh`
 
-Depth filtering
-QUAL score thresholds
-Genotype quality (GQ)
-Missingness filtering
+  Merges DeepVariant gVCFs into a cohort‑level VCF using GLnexus.
 
+- **Variant Filtering**
 
-• Imputation & Phasing
-Script:
+  Script:
+  - `vcf_filter.sh`
 
-BEAGLE.sh
+  Applies standard SNP quality filters, including:
+  - Depth thresholds
+  - QUAL score filtering
+  - Genotype quality (GQ)
+  - Missingness filtering
 
-Performs genotype imputation and phasing using BEAGLE.
+- **Imputation & Phasing**
 
-• PCA / Population Structure
-Script:
+  Script:
+  - `BEAGLE.sh`
 
-PCA_Tassel.sh
+  Performs genotype imputation and phasing using BEAGLE.
 
-Runs PCA in TASSEL to explore population structure of the filtered SNP dataset.
+- **PCA / Population Clustering**
 
-Genomic Conservation & Deleterious Mutation Pipeline
-Overview
-Workflow for computing evolutionary conservation and predicting deleterious mutations across coding sequences.
-Integrates:
+  Script:
+  - `PCA_Tassel.sh`
 
-Codon‑aware gene alignments
-Phylogenetic conservation (PhyloP, PhastCons)
-Substitution‑rate models (EST)
-Machine‑learning predictions (PlantCAD2)
+  Runs PCA in TASSEL to explore population structure from filtered SNPs.
 
+## Genomic Conservation & Deleterious Mutation Pipeline
 
-Pipeline Steps & Scripts
-• Multiple Sequence Alignment (MSA)
-Codon‑aware gene MSAs generated using the published pipeline:
-p_reelgene: https://bitbucket.org/bucklerlab/p_reelgene/
+### Overview
+This workflow annotates evolutionary conservation and deleteriousness across coding sequences. It integrates:
+- Codon‑aware sequence alignments
+- Phylogenetic conservation (PhyloP, PhastCons)
+- Substitution‑rate models (EST)
+- Machine‑learning deleteriousness scoring (PlantCAD2)
 
-• Conservation Scoring
-Scripts:
+### Pipeline Steps & Scripts
 
-phastcons.sh
-EST.sh
-EST_prep.R
+- **Multiple Sequence Alignment (MSA)**
 
-Computes conservation scores:
+  Codon‑aware gene MSAs generated using the published pipeline:
+  - `p_reelgene`
+  - [p_reelgene on Bitbucket](https://bitbucket.org/bucklerlab/p_reelgene/)
 
-PhastCons
-EST (Evolutionary Substitution‑based Thresholding)
+- **Conservation Scoring**
 
+  Scripts:
+  - `phastcons.sh`
+  - `EST.sh`
+  - `EST_prep.R`
 
-• Deleteriousness Annotation
-Script:
+  Computes conservation metrics:
+  - PhastCons
+  - EST (Evolutionary Substitution-based Thresholding)
 
-PlantCAD2.sh
+- **Deleteriousness Annotation**
 
-Predicts deleterious amino‑acid substitutions using PlantCAD2.
+  Script:
+  - `PlantCAD2.sh`
 
-• Variant Integration
-Integrates variant calls from:
+  Predicts deleterious amino‑acid substitutions using PlantCAD2.
 
-DeepVariant
-PhastCons
-PhyloP
-EST
-PlantCAD2
+- **Variant Integration**
 
-Produces a genome‑wide deleterious mutation annotation table.
+  Uses variant calls from `deepvariant.sh` and merges:
+  - PhastCons
+  - PhyloP
+  - EST
+  - PlantCAD2
+  - DeepVariant SNPs
 
-Citation & Dependencies
-External Software
+  Produces a genome‑wide deleterious mutation annotation table.
 
-DeepVariant
-GLnexus
-BEAGLE
-TASSEL
-PHAST (phastCons, phyloFit, phyloP)
-PlantCAD2
-EST (Buckler Lab)
+## Citation & Dependencies
 
-Gene Alignment Reference
-If using codon‑aware alignments:
+### Key External Software
+- DeepVariant
+- GLnexus
+- BEAGLE
+- TASSEL
+- PhastCons / phyloFit / phyloP (PHAST)
+- PlantCAD2
+- EST pipeline (Buckler Lab)
 
-Multiple sequence alignments were generated using the bucklerlab/p_reelgene pipeline:
-https://bitbucket.org/bucklerlab/p_reelgene
+### Reference
+If using gene alignments:
+- Multiple sequence alignments generated using the bucklerlab p_reelgene pipeline ([p_reelgene on Bitbucket](https://bitbucket.org/bucklerlab/p_reelgene/)).
