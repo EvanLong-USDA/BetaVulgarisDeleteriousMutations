@@ -13,5 +13,5 @@ source activate
 conda activate MSA_Gen
 
 name=`echo $1 | cut -f 1 -d "."`
-vcftools --gzvcf $1 --minDP 5 --minGQ 20 --stdout --recode > filtered_nomaf/${name}.vcf
+vcftools --gzvcf $1 --minDP 5 --minGQ 20 --max-missing 0.1 --stdout --recode > filtered_nomaf/${name}.vcf
 pbgzip -f filtered_nomaf/${name}.vcf
