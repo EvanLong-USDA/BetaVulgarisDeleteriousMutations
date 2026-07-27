@@ -1,0 +1,151 @@
+---
+title: "BetaVulDeleterious"
+author: "EvanLong"
+date: "2026-07-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+setwd("C:/Users/evan.long/USDA/REE-ARS-PWA-2054-SBGeneEvolution - General/Deleterious/MegaPanel")
+library(data.table)
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(stringr)
+
+VarStats <- fread("Deleterious_PCAD_baseml_PhyloP_2.txt")
+bins <- seq(0, 0.5, by = 0.05)  # This will create bins [0, 0.05, 0.1, ..., 1.0]
+
+# Create labels for the bins
+labels <- paste(head(bins, -1), tail(bins, -1), sep = "-")
+```
+
+## Including Plots
+
+
+```{r}
+PlantCADSIFT <- VarStats %>% mutate(Variant=ifelse(nchar(REF)==1 & nchar(Allele)==1,"SNP","Indel"))
+PlantCADSIFT_SNPS <- PlantCADSIFT %>% filter(Variant=="SNP")
+PlantCADSIFT_INDEL <- PlantCADSIFT %>% filter(Variant=="Indel")
+quantile(PlantCADSIFT_SNPS$SCORE,0.01,na.rm = T)
+quantile(PlantCADSIFT_INDEL$SCORE,0.01,na.rm = T)
+
+PlantCADSIFT <- PlantCADSIFT %>% mutate(PlantCADClassification=ifelse(SCORE <= quantile(PlantCADSIFT_SNPS$SCORE,0.01,na.rm = T) & Variant == "SNP", T,
+                                                                      ifelse(SCORE <= quantile(PlantCADSIFT_INDEL$SCORE,0.01,na.rm = T) & Variant == "Indel", T, F)))
+                                                                           
+```
+```{r}
+
+PlantCADSIFT <- PlantCADSIFT %>% mutate(AncAlleEntry=ifelse(AncAllele==REF, 0, ifelse(AncAllele==Allele, Entry, "NA")))
+
+SNP_sum <- PlantCADSIFT %>% filter(Variant=="SNP") %>% group_by(CHROM,POS) %>% 
+  summarize(
+    Alleles = str_c(
+      sort(unique(AncAlleEntry[!is.na(Entry)])), # remove NA and sort (optional)
+      collapse = ","
+    ),
+    .groups = "drop"
+  )
+
+SNP_sum$Alleles <- gsub(",NA", "", SNP_sum$Alleles)  # Remove "NA," from the beginning
+SNP_sum <- SNP_sum %>% mutate(Alleles = ifelse(Alleles == "", NA, Alleles))  # Replace empty strings with NA
+
+MegaPanelVCF <- fread("MegaBeet_Coding.vcf")
+colnames(MegaPanelVCF)[1] <- "CHROM"
+# colnames(MegaPanelVCF)
+MegaPanelVCF <- MegaPanelVCF %>% dplyr::select(-ID,-REF,-ALT,-QUAL,-FILTER,-INFO,-FORMAT)
+MegaPanelVCF_SNP <- inner_join(SNP_sum,MegaPanelVCF)
+MegaPanelVCF_SNP <- as.data.frame(MegaPanelVCF_SNP)
+
+```
+
+
+```{r}
+for(row in 1:nrow(MegaPanelVCF_SNP)){
+  alleles <- MegaPanelVCF_SNP[row,3]
+  # print(MegaPanelVCF_del[row,3:ncol(MegaPanelVCF_del)] )
+ MegaPanelVCF_SNP[row,4:ncol(MegaPanelVCF_SNP)] <- unlist(sapply(MegaPanelVCF_SNP[row,4:ncol(MegaPanelVCF_SNP)], 
+                                                                function(y) sum(sapply(unlist(strsplit(y,"|"))[c(1,3)], function(x) grepl(x, alleles)))))
+}
+MegaPanelVCF_SNP[,4:ncol(MegaPanelVCF_SNP)] <- apply(MegaPanelVCF_SNP[,4:ncol(MegaPanelVCF_SNP)], 2,function(col) unlist(sapply(col, function(y) as.numeric(y))))
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+
