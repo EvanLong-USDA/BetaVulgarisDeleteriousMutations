@@ -2,6 +2,8 @@
 
 This repository holds scripts used for a manuscript concerning deleterious mutations across the beet genome. Resulting tables needed for manuscript figure generation are also here.
 
+Resulting vcf and Deleterious annotation table are available on zenodo - https://zenodo.org/records/21628750?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImUxNDY2YjY4LThkODMtNGJiMi1hM2E1LTE0YzA0NzEyZjc5OCIsImRhdGEiOnt9LCJyYW5kb20iOiI1NDJiYTU4YmM1OGE2NzU2NzkxNmE0YWJmNGQyMDI4MCJ9.1upwgH148tHvswWWWu-u_xXP2lq5kO9Db55BDAKaaT0jqGr1hLhrBD-wHA90D-2aexCYOnth01N6WpdwILJUAA
+
 ## Genotyping & Genomic Conservation Pipelines
 
 This repository contains two related workflows:
@@ -85,7 +87,7 @@ This workflow annotates evolutionary conservation and deleteriousness across cod
 
 - **Multiple Sequence Alignment (MSA)**
 
-  Codon‑aware gene MSAs generated using the published pipeline:
+  Gene MSAs generated using the published pipeline:
   - `p_reelgene`
   - [p_reelgene on Bitbucket](https://bitbucket.org/bucklerlab/p_reelgene/)
 
