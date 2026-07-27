@@ -5,65 +5,125 @@ Genotyping & Genomic Conservation Pipelines
 
 A high‑confidence genotyping workflow (WGS → SNP calling → joint genotyping → filtering -> Imputation).
 A genomic conservation & deleterious‑mutation annotation workflow (gene alignment → conservation scoring → pathogenicity prediction).
+Genotyping & Genomic Conservation Pipelines
+This repository contains two related workflows:
 
-## 1. Genotyping Pipeline
+
+Genotyping Pipeline
+High‑confidence SNP calling, imputation, and population structure analysis.
+
+
+Genomic Conservation & Deleterious Mutation Pipeline
+Codon‑aware alignments, conservation scoring, and deleterious mutation annotation.
+
+
+Both pipelines are designed for population genomics, germplasm characterization, and conservation genetics.
+
+1. Genotyping Pipeline
 Overview
-This workflow processes whole‑genome sequencing (WGS) reads, performs variant calling with DeepVariant, joint genotyping using GLnexus, filtering of high‑quality SNPs,Imputation using BEAGLE, and PCA‑based clustering using TASSEL.
-Workflow Steps & Scripts
-1. iseq to download SRA fastq and then Read Processing
+This workflow processes WGS data from raw FASTQ through variant calling, joint genotyping, imputation, and PCA clustering. It uses DeepVariant, GLnexus, BEAGLE, and TASSEL.
+Pipeline Steps & Scripts
+1. Download SRA Reads & Read Processing
+Scripts:
+
 iseq.sh
 Process_Reads.sh
 
-Quality trimming, adaptor removal, and alignment to the reference genome.
+Includes:
+
+SRA FASTQ download
+Quality trimming
+Adapter removal
+Alignment to reference genome
+
+
 2. Variant Calling
+Script:
+
 deepvariant.sh
 
-Single‑sample SNP and indel calling using DeepVariant.
+Generates high‑accuracy single‑sample SNP and indel calls using DeepVariant.
+
 3. Joint Genotyping
+Script:
+
 glnexus.sh
 
-Merges DeepVariant gVCFs into a unified, cohort‑level VCF using GLnexus.
-4. VCF Filtering
+Merges DeepVariant gVCFs into a cohort‑level VCF using GLnexus.
+
+4. Variant Filtering
+Script:
+
 vcf_filter.sh
 
-Applies standard SNP QC filters (depth, quality, genotype quality, missingness, etc.).
-5. Imputation
+Applies standard SNP quality filters, including:
+
+Depth thresholds
+QUAL score filtering
+Genotype quality (GQ)
+Missingness filtering
+
+
+5. Imputation & Phasing
+Script:
 
 BEAGLE.sh
 
-performs BEAGLE imputation and phasing.
+Performs genotype imputation and phasing using BEAGLE.
+
 6. PCA / Population Clustering
+Script:
+
 PCA_Tassel.sh
 
-Runs TASSEL PCA to explore population structure from filtered SNPs.
+Runs PCA in TASSEL to explore population structure from filtered SNPs.
 
-## 2. Genomic Conservation & Deleterious Mutation Pipeline
+2. Genomic Conservation & Deleterious Mutation Pipeline
 Overview
-This workflow annotates evolutionary conservation and predicted deleteriousness across coding sequences, integrating phylogenetic conservation (PhyloP/PhastCons), substitution‑rate models, and machine‑learning deleteriousness scoring (PlantCAD2 and EST‑based metrics).
-Workflow Steps & Scripts
-1. Multiple Sequence Alignment (MSA) Generation
-Uses the previously published bucklerlab/p_reelgene (https://bitbucket.org/bucklerlab/p_reelgene/) workflow to produce codon‑aware MSAs for each gene.
+This workflow annotates evolutionary conservation and deleteriousness across coding sequences.
+It integrates:
+
+Codon‑aware sequence alignments
+Phylogenetic conservation (PhyloP, PhastCons)
+Substitution‑rate models (EST)
+Machine‑learning deleteriousness scoring (PlantCAD2)
+
+Pipeline Steps & Scripts
+1. Multiple Sequence Alignment (MSA)
+Codon‑aware gene MSAs generated using the published pipeline:
+p_reelgene
+https://bitbucket.org/bucklerlab/p_reelgene/
+
 2. Conservation Scoring
+Scripts:
+
 phastcons.sh
 EST.sh
 EST_prep.R
 
-Runs PhastCons and EST evolutionary conservation metrics on aligned gene sequences.
+Computes conservation metrics:
+
+PhastCons
+EST (Evolutionary Substitution-based Thresholding)
+
+
 3. Deleteriousness Annotation
+Script:
+
 PlantCAD2.sh
 
-Applies the PlantCAD2 classifier for deleterious mutations.
+Predicts deleterious amino‑acid substitutions using PlantCAD2.
 
-5. Combined Annotation Table
-Merges:
+4. Variant Integration
+Uses variant calls from deepvariant.sh and merges:
 
 PhastCons
 PhyloP
 EST
 PlantCAD2
-deepvariant SNPs
-to produce a genome‑wide deleterious‑mutation annotation table.
+DeepVariant SNPs
 
+Produces a genome‑wide deleterious mutation annotation table.
 
 
 ## Citation & Dependencies
